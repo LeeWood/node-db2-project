@@ -23,7 +23,7 @@ router.get('/:id', (req, res) => { //GET indivudual
 
   const { id } = req.params;
 
-  db('fruits').where({ id }).first()
+  db('cars').where({ id }).first()
     .then(car => {
       res.status(200).json(car);
     })
