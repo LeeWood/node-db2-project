@@ -58,25 +58,67 @@ router.post('/', (req, res) => {
 
 // * PUT
 
-router.put('/:id', (req, res) => {
+// router.put('/:id', async (req, res) => {
+
+//   const { id } = req.params;
+//   const updatedInfo = req.body;
+
+//   db('cars').where('id', id).update(updatedInfo)
+//     .then(updatedCar => {
+//       res.status(200).json({
+//         updated: updatedCar
+//       })
+//       .catch(err => {
+//         res.status(500).json({
+//           message: "Failed to update car data.",
+//           error: err
+//         });
+//       });
+//     });
+// }); 
+
+{/*
+//! With this version of the query, I was getting an error: 
+Unhandled rejection TypeError: res.status(...).json(...).catch is not a function
+at db.where.update.then.updatedCar (C:\Users\Aleesha\LAMBDA_PROJECTS\nodedb22\node-db2-project\cars\cars-router.js:71:13)
+//* it WAS still functional, but with an error i couldn't fix...switching to try/catch/await does not result in error.
+*/}
+
+router.put('/:id', async (req, res) => {
 
   const { id } = req.params;
   const updatedInfo = req.body;
 
-  db('cars').where('id', id).update(updatedInfo)
-    .then(updatedCar => {
-      res.status(200).json({
-        updated: updatedCar
-      })
-      .catch(err => {
-        res.status(500).json({
-          message: "Failed to update car data.",
-          error: err
-        });
-      });
+  try {
+    const rowsUpdated = await db('cars').where('id', id).update(updatedInfo);
+    res.status(200).json({
+      updated: rowsUpdated
     });
+  }catch(err) {
+    res.status(500).json({
+      message: "Failed to update car data",
+      error: err
+    });
+  }
 });
 
 // * DELETE
+
+router.delete('/:id', async (req, res) => {
+
+  const { id } = req.params;
+
+  try {
+    const rowsDeleted = await db('cars').where('id', id).del();
+    res.status(200).json({
+      deletedRecords: rowsDeleted
+    });
+  }catch(err) {
+    res.status(500).json({
+      message: "Failed to delete car data",
+      error: err
+    });
+  }
+});
 
 module.exports = router;
